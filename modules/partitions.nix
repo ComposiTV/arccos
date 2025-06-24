@@ -30,7 +30,8 @@
             Type = "esp";
             UUID = "c12a7328-f81f-11d2-ba4b-00a0c93ec93b"; # Well known
             Format = "vfat";
-            SizeMinBytes = "256M";
+            SizeMinBytes = "260M";
+            SizeMaxBytes = "260M";
             SplitName = "-";
           };
         };
@@ -43,21 +44,20 @@
             Format = "squashfs";
             Minimize = "off";
             ReadOnly = "yes";
-
-            SizeMinBytes = "1G";
-            SizeMaxBytes = "1G";
+            SizeMinBytes = "4G";
+            SizeMaxBytes = "4G";
             SplitName = "store";
           };
         };
-
+/*
         # Placeholder for the second installed Nix store.
         "store-empty" = {
           repartConfig = {
             Type = "linux-generic";
             Label = "_empty";
             Minimize = "off";
-            SizeMinBytes = "1G";
-            SizeMaxBytes = "1G";
+            SizeMinBytes = "4G";
+            SizeMaxBytes = "4G";
             SplitName = "-";
           };
         };
@@ -67,19 +67,19 @@
           repartConfig = {
             Type = "var";
             UUID = "4d21b016-b534-45c2-a9fb-5c16e091fd2d"; # Well known
-            Format = "xfs";
+            Format = "btrfs";
             Label = "nixos-persistent";
             Minimize = "off";
 
             # Has to be large enough to hold update files.
-            SizeMinBytes = "2G";
-            SizeMaxBytes = "2G";
+            SizeMinBytes = "8G";
+            SizeMaxBytes = "8G";
             SplitName = "-";
 
             # Wiping this gives us a clean state.
             FactoryReset = "yes";
           };
-        };
+        };*/
       };
     };
 }

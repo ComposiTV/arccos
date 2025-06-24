@@ -1,8 +1,8 @@
 {
-  description = "systemd-sysupdate / systemd-repart Example";
+  description = "Alternative Remote Control ComposiTV Operating System";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -23,7 +23,7 @@
 
         # We treat everything as cross-compilation without a special
         # case for isBuildSystem. Nixpkgs will do the right thing.
-        crossPkgs = import nixpkgs { localSystem = buildPlatform; crossSystem = system; };
+        crossPkgs = import nixpkgs { localSystem = buildPlatform; crossSystem = system; config = { allowUnfree = true; }; };
 
         # A convenience wrapper around lib.nixosSystem that configures
         # cross-compilation.
@@ -48,53 +48,20 @@
       {
         packages =
           let
-            appliance_17 = crossNixos {
+            ctv_1 = crossNixos {
               imports = [
                 ./base.nix
-                ./version-17.nix
+                ./version-1.nix
               ];
 
-              # To avoid having to prepare an update server, we just drop
-              # an update into the filesystem.
-              systemd.services.update-prepare-debug = {
-                description = "Prepare a fake update";
-                wantedBy = [ "multi-user.target" ];
-                after = [ "local-fs.target" ]; # Ensures the script runs after file systems are mounted.
-                requires = [ "local-fs.target" ]; # Ensure file systems are mounted.
-
-                script = ''
-                  # We configured systemd-sysupdate to look for updates here.
-                  mkdir /var/updates
-
-                  # We can't symlink the update package. systemd-sysupdate doesn't like that.
-                  cp ${self.packages."${system}".appliance_18_update}/* /var/updates
-                '';
-
-                serviceConfig = {
-                  Type = "oneshot"; # Ensures the service runs once and then exits.
-                };
-              };
-
-              system.image.version = "17";
-            };
-
-            appliance_18 = crossNixos {
-              imports = [
-                ./base.nix
-                ./version-18.nix
-              ];
-
-              system.image.version = "18";
+              system.image.version = "2025062405"; # YYYYMMDDnn
             };
           in
           {
-            default = self.packages."${system}".appliance_17_image;
+            default = self.packages."${system}".ctv_image;
 
-            appliance_17_image = self.lib.mkInstallImage appliance_17;
-            appliance_17_update = self.lib.mkUpdate appliance_17;
-
-            appliance_18_image = self.lib.mkInstallImage appliance_18;
-            appliance_18_update = self.lib.mkUpdate appliance_18;
+            ctv_image = self.lib.mkInstallImage ctv_1;
+            ctv_update = self.lib.mkUpdate ctv_1;
           };
       })) // {
       lib = {

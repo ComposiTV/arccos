@@ -10,6 +10,7 @@
 
   system.etc.overlay.enable = true;
   systemd.sysusers.enable = true;
+  boot.initrd.systemd.emergencyAccess = true;
 
   system.disableInstallerTools = true;
   programs.less.lessopen = null;

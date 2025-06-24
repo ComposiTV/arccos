@@ -1,4 +1,5 @@
-{ config, ... }: {
+{ config, ... }:
+{
 
   zramSwap = {
     # TODO zram-generator fails to compile for ARM.
@@ -18,7 +19,7 @@
 
     "/var" =
       let
-        partConf = config.image.repart.partitions."var".repartConfig;
+        partConf = config.systemd.repart.partitions."40-var";
       in
       {
         device = "/dev/disk/by-partuuid/${partConf.UUID}";
@@ -42,5 +43,11 @@
         device = "/dev/disk/by-partlabel/${partConf.Label}";
         fsType = partConf.Format;
       };
+
+    "/home" = {
+      depends = [ "/var" ];
+      device = "/var/home";
+      options = [ "bind" ];
+    };
   };
 }
